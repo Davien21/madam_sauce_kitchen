@@ -1,10 +1,13 @@
 const server = require('../../app')
 const request = require('supertest');
-describe(('GET /', async () => {
-  it(('should create an http server'), () => {
+describe('GET /', () => {
+  afterEach( async () => {
+    await server.close(); 
+  })
+  it(('should create an http server'), async () => {
     const res = await request(server)
       .get('/')
       .send('success')
-    expect(res.body).toBe('success')
+    expect(res.body).toMatchObject({message:'success'})
   })
-}))
+})
