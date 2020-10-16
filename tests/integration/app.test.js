@@ -7,7 +7,7 @@ describe('GET /', () => {
   it(('should create an http server'), async () => {
     const res = await request(server)
       .get('/')
-      .send('success')
+      .send()
     expect(res.body).toMatchObject({message:'success'})
   })
 })
