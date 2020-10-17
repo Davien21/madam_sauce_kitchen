@@ -31,8 +31,8 @@ model.userSchema.methods.generateAuthToken  = function() {
   return token =  jwt.sign({ _id: this._id }, config.get('jwtPrivateKey'));
 }
 
-model.admin = mongoose.model('Admin', model.adminSchema)
- 
+model.Admin = mongoose.model('Admin', model.adminSchema)
+
 
 module.exports = model;
 
