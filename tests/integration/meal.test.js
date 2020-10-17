@@ -62,6 +62,13 @@ describe('/api/meals', () => {
 
       expect(res.status).toBe(400)
     })
+    it(('should return 400 if meal is already in DB'), async () => {
+      await meal.save();
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
     it(('should return 200 if inputs are valid'), async () => {
       const res = await exec();
 
