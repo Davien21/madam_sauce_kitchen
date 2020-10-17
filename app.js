@@ -17,13 +17,14 @@ mongoose.connect(db,{
 const { Meal } = require('./models/meal')
 const meals = express.Router();
 
-meals.post('/api/meals', async (req, res) => {
-  if (!req.body.name) return res.status(400).send('Invalid meal')
- 
+meals.post('/', (req, res) => {
+  if (!req.body.name) return res.status(400).send('name is required')
+  if (!req.body.day) return res.status(400).send('A day is required')
+
 })
 
 app.use(express.json());
-app.use('/', meals);
+app.use('/api/meals', meals);
 
 
 const port = process.env.PORT || 3000;
