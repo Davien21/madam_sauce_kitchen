@@ -27,6 +27,13 @@ meals.post('/', (req, res) => {
   if (!daysOfTheWeek.includes(req.body.day.toLowerCase())) 
     return res.status(400).send('must be a valid day of the week')
   
+    let meal = new Meal({
+      _id: req.body._id,
+      name: 'chidi',
+      day: 'monday'
+    })
+    meal = meal.save()
+
   res.send();
 })
 
