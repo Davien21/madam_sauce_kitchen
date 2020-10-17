@@ -25,6 +25,13 @@ meals.post('/', auth, async (req, res) => {
   const { error }  = validateMeal(req.body);
 	if (error) return res.status(400).send(error.details[0].message);
 
+  let mealInDB = await Meal.findOne({
+    "name": req.body.name,
+    "day": req.body.day
+  })
+
+  if(mealInDB) return res.status(400).send('This Meal already exists')
+
   let meal = new Meal({
     name: req.body.name,
     day: req.body.day
