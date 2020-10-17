@@ -1,7 +1,17 @@
 const server = require('../../app')
 const { Meal } = require('../../models/meal')
 const request = require('supertest');
+const mongoose = require('mongoose')
+
 describe('POST /', () => {
+  
+// Tests for POST
+// 400 if name is falsy
+// 400 if day is falsy
+// 400 if day is not valid day of the week
+// 200 if inputs are valid
+// save meal to db if inputs are valid
+
   afterEach( async () => {
     await server.close(); 
   })
@@ -29,11 +39,14 @@ describe('POST /', () => {
       .send({name: 'chidi', day: 'monday'})
     expect(res.status).toBe(200)
   })
-})
+  it(('should save meal if inputs are valid'), async () => {
+    const mealId = mongoose.Types.ObjectId()
+    const res = await request(server)
+      .post('/api/meals')
+      .send({_id: mealId,name: 'chidi', day: 'monday'})
 
-// Tests
-// 400 if name is falsy
-// 400 if day is falsy
-// 400 if day is not valid day of the week
-// 200 if inputs are valid
-// save meal to db if inputs are valid
+    const meal = await Meal.findById(mealId)
+    expect(meal).not.toBeNull()
+    expect(meal).toMatchObject({name: 'chidi', day: 'monday'})
+  })
+})
