@@ -1,3 +1,4 @@
 {
+  "jwtPrivateKey": "madam_sauce_kitchen_jwtPrivateKey",
   "db": "mongodb://localhost/madam_sauce_kitchen"
 }
