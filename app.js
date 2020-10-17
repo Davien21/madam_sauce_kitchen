@@ -4,15 +4,10 @@ const app = express();
 
 require('./startup/db')();
 
-const { Meal, validateMeal } = require('./models/meal')
-
-const auth = require('./middleware/auth')
-const validateBody = require('./middleware/validateBody')
-
 const meals = require('./routes/meals')
 
 app.use(express.json());
-app.use('/api/meals', meals);
+app.use('/api/meals', meals) // use the meals router;
 
 
 const port = process.env.PORT || 3000;
