@@ -16,4 +16,10 @@ describe('POST /', () => {
       .send({name: 'chidi'})
     expect(res.status).toBe(400)
   })
+  it(('should return 400 if day is not a valid day of the week'), async () => {
+    const res = await request(server)
+      .post('/api/meals')
+      .send({name: 'chidi', day: 'omo'})
+    expect(res.status).toBe(400)
+  })
 })
