@@ -4,10 +4,10 @@ describe('POST /', () => {
   afterEach( async () => {
     await server.close(); 
   })
-  it(('should return 404 if name is falsy'), async () => {
+  it(('should return 400 if name is falsy'), async () => {
     const res = await request(server)
-      .get('/')
+      .post('/api/meals')
       .send()
-    expect(res.status).toBe(404)
+    expect(res.status).toBe(400)
   })
 })
