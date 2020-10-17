@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const config = require('config')
 const winston = require('winston');
 const express = require('express');
@@ -18,6 +19,16 @@ const { Meal } = require('./models/meal')
 const meals = express.Router();
 
 meals.post('/', (req, res) => {
+  const token = req.header('x-auth-token')
+  if (!token) return res.status(401).send('Access denied. No token provided.')
+
+  try {
+    const decoded = jwt.verify(token, config.get('jwtPrivateKey'))
+    req.user = decoded;
+  } catch (ex) {
+    res.status(400).send('Invalid token.');
+  }
+
   if (!req.body.name) return res.status(400).send('name is required')
   if (!req.body.day) return res.status(400).send('A day is required')
   const daysOfTheWeek = [
