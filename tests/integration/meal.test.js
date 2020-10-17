@@ -10,4 +10,10 @@ describe('POST /', () => {
       .send()
     expect(res.status).toBe(400)
   })
+  it(('should return 400 if day is falsy'), async () => {
+    const res = await request(server)
+      .post('/api/meals')
+      .send({name: 'chidi'})
+    expect(res.status).toBe(400)
+  })
 })
