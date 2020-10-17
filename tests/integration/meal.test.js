@@ -5,8 +5,26 @@ const mongoose = require('mongoose')
 
 describe('/api/meals', () => {
   let server;
+  let token;
+  let name;
+  let day;
+  let meal;
+  let mealId;
   beforeEach( () => {
     server = require('../../app')
+    
+    name = 'chidi'
+    day = 'monday'
+    meal = new Meal({
+      _id: mealId,
+      name,
+      day
+    })
+
+    token = new Admin().generateAuthToken();
+    mealId = mongoose.Types.ObjectId()
+
+
   })
   afterEach( async () => {
     await server.close(); 
@@ -14,68 +32,57 @@ describe('/api/meals', () => {
     
   })
   describe('POST /', () => {
-    it(('should return 401 if not logged in'), async () => {
-      token = "";
-      const res = await request(server)
+    const exec = () => {
+      return request(server)
         .post('/api/meals')
         .set('x-auth-token', token)
-        .send()
+        .send({_id: mealId, name, day})
+    }
+    it(('should return 401 if not logged in'), async () => {
+      
+      token = "";
+
+      const res = await exec();
+
       expect(res.status).toBe(401)
     })
     it(('should return 400 if name is falsy'), async () => {
-      token = new Admin().generateAuthToken();
-      
-      const res = await request(server)
-        .post('/api/meals')
-        .set('x-auth-token', token)
-        .send()
+      name = "";
 
-      expect(res.status).toBe(400)
+      const res = await exec();
+
+      expect(res.status).toBe(400);
     })
     it(('should return 400 if day is falsy'), async () => {
-      token = new Admin().generateAuthToken();
+      day = "";
       
-      const res = await request(server)
-        .post('/api/meals')
-        .set('x-auth-token', token)
-        .send({name: 'chidi'})
+      const res = await exec();
 
       expect(res.status).toBe(400)
     })
     it(('should return 400 if day is not a valid day of the week'), async () => {
-      token = new Admin().generateAuthToken();
+      day = 'bad day'
       
-      const res = await request(server)
-        .post('/api/meals')
-        .set('x-auth-token', token)
-        .send({name: 'chidi', day: 'omo'})
+      const res = await exec();
 
       expect(res.status).toBe(400)
     })
     it(('should return 200 if inputs are valid'), async () => {
-      token = new Admin().generateAuthToken();
-      
-      const res = await request(server)
-        .post('/api/meals')
-        .set('x-auth-token', token)
-        .send({name: 'chidi', day: 'monday'})
+      const res = await exec();
 
       expect(res.status).toBe(200)
     })
     it(('should save meal if inputs are valid'), async () => {
-      token = new Admin().generateAuthToken();
-
-      const mealId = mongoose.Types.ObjectId()
-      const res = await request(server)
-        .post('/api/meals')
-        .set('x-auth-token', token)
-        .send({_id: mealId,name: 'chidi', day: 'monday'})
+      await exec();
   
-      const meal = await Meal.findById(mealId)
-      expect(meal).not.toBeNull()
-      expect(meal).toMatchObject({name: 'chidi', day: 'monday'})
+      const mealInDB = await Meal.findById(mealId)
+
+      expect(mealInDB).not.toBeNull()
+      expect(mealInDB).toMatchObject({name: 'chidi', day: 'monday'})
     })
   })
 
 })
-// return 401 if not logged in
+// Remaining tests:
+// return 400 if name is less than 5 characters
+// return 400 if name is more than 50 characters
