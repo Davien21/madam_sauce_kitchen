@@ -24,8 +24,10 @@ meals.post('/', (req, res) => {
     'monday', 'tuesday', 'wednesday', 
     'thursday', 'friday', 'saturday', 'sunday'
   ]
-  if (!daysOfTheWeek.includes(req.body.day.toLowerCase)) 
+  if (!daysOfTheWeek.includes(req.body.day.toLowerCase())) 
     return res.status(400).send('must be a valid day of the week')
+  
+  res.send();
 })
 
 app.use(express.json());
