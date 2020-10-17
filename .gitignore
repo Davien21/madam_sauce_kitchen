@@ -121,4 +121,5 @@ dist
 .DS_Store
 .env
 coverage/
+.vscode/
 docs/
