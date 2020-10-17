@@ -15,30 +15,23 @@ mongoose.connect(db,{
 })
 .then(() => winston.info(`Connected to ${db} ...`))
 
-const { Meal } = require('./models/meal')
+const { Meal, validateMeal } = require('./models/meal')
 
 const auth = require('./middleware/auth')
 
 const meals = express.Router();
 
-meals.post('/', auth, (req, res) => {
-  if (!req.body.name) return res.status(400).send('name is required')
-  if (!req.body.day) return res.status(400).send('A day is required')
-  const daysOfTheWeek = [
-    'monday', 'tuesday', 'wednesday', 
-    'thursday', 'friday', 'saturday', 'sunday'
-  ]
-  if (!daysOfTheWeek.includes(req.body.day.toLowerCase())) 
-    return res.status(400).send('must be a valid day of the week')
-  
-    let meal = new Meal({
-      _id: req.body._id,
-      name: 'chidi',
-      day: 'monday'
-    })
-    meal = meal.save()
+meals.post('/', auth, async (req, res) => {
+  const { error }  = validateMeal(req.body);
+	if (error) return res.status(400).send(error.details[0].message);
 
-  res.send();
+  let meal = new Meal({
+    name: req.body.name,
+    day: req.body.day
+  })
+  meal = await meal.save()
+
+  res.send(meal);
 })
 
 app.use(express.json());
