@@ -15,7 +15,5 @@ model.mealSchema = new mongoose.Schema({
 
 model.Meal = mongoose.model('Meal', model.mealSchema)
 
- 
-
 module.exports = model;
 
