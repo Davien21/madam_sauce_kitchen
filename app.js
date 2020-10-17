@@ -20,7 +20,12 @@ const meals = express.Router();
 meals.post('/', (req, res) => {
   if (!req.body.name) return res.status(400).send('name is required')
   if (!req.body.day) return res.status(400).send('A day is required')
-
+  const daysOfTheWeek = [
+    'monday', 'tuesday', 'wednesday', 
+    'thursday', 'friday', 'saturday', 'sunday'
+  ]
+  if (!daysOfTheWeek.includes(req.body.day.toLowerCase)) 
+    return res.status(400).send('must be a valid day of the week')
 })
 
 app.use(express.json());
