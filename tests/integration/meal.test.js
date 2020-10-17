@@ -9,22 +9,17 @@ describe('/api/meals', () => {
   let name;
   let day;
   let meal;
-  let mealId;
   beforeEach( () => {
     server = require('../../app')
     
     name = 'chidi'
     day = 'monday'
     meal = new Meal({
-      _id: mealId,
       name,
       day
     })
 
     token = new Admin().generateAuthToken();
-    mealId = mongoose.Types.ObjectId()
-
-
   })
   afterEach( async () => {
     await server.close(); 
@@ -36,10 +31,10 @@ describe('/api/meals', () => {
       return request(server)
         .post('/api/meals')
         .set('x-auth-token', token)
-        .send({_id: mealId, name, day})
+        .send({ name, day})
     }
     it(('should return 401 if not logged in'), async () => {
-      
+
       token = "";
 
       const res = await exec();
@@ -75,14 +70,15 @@ describe('/api/meals', () => {
     it(('should save meal if inputs are valid'), async () => {
       await exec();
   
-      const mealInDB = await Meal.findById(mealId)
+      const mealInDB = await Meal.findOne({name, day})
 
       expect(mealInDB).not.toBeNull()
-      expect(mealInDB).toMatchObject({name: 'chidi', day: 'monday'})
+      expect(mealInDB).toMatchObject({name, day})
     })
   })
 
 })
 // Remaining tests:
+// throw err, return 400 if an error is received while verifying token
 // return 400 if name is less than 5 characters
 // return 400 if name is more than 50 characters
