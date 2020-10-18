@@ -31,10 +31,10 @@ describe('/api/meals', () => {
     })
   })
   describe('GET /?day', () => {
-    it('should return 404 if day is invalid', async () => {
+    it('should return 400 if day is invalid', async () => {
       const res = await request(server).get('/api/meals/?day=mahd');
 
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(400);
     })
     it('should return 200 if the day is a valid day of the week', async () => {
       const validDays = [
