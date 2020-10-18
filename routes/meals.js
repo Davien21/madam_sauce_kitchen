@@ -10,6 +10,15 @@ router.get('/', async (req, res) => {
 	res.send(meal);
 })
 
+router.get('/:day', async (req, res) => {
+  const validDays = [
+    'monday', 'tuesday', 'wednesday', 
+    'thursday', 'friday', 'saturday', 'sunday'
+  ]
+  if (!validDays.includes(req.params.day)) return res.status(404).send('Invalid day')
+  res.send()
+})
+
 router.post('/', [auth, validateBody(validateMeal)], async (req, res) => {
   const mealInDB = await Meal.lookup(req.body.name, req.body.day)
 
