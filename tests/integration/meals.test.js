@@ -24,20 +24,16 @@ describe('/api/meals', () => {
       
       expect(res.status).toBe(200)
       expect(res.body.length).toBe(2);
-      expect(res.body.some(g => g.name === 'banga soup')).toBeTruthy()
-      expect(res.body.some(g => g.day === 'friday')).toBeTruthy()
-      expect(res.body.some(g => g.name === 'jellof rice')).toBeTruthy()
-      expect(res.body.some(g => g.day === 'tuesday')).toBeTruthy()
-    
+      res.body.forEach((meal) => {
+        expect(meal).toHaveProperty('name', meal.name)
+        expect(meal).toHaveProperty('day', meal.day)
+      })
     })
   })
   
   describe('GET /:day', () => {
-    // return 404 if day is invalid
-    // return 200 if the day is a valid day of the week
-    // return meals for that day if input is valid
     it('should return 404 if day is invalid', async () => {
-      const res = await request(server).get('/api/genres/mahd');
+      const res = await request(server).get('/api/meals/mahd');
 
       expect(res.status).toBe(404);
     })
@@ -47,12 +43,27 @@ describe('/api/meals', () => {
         'thursday', 'friday', 'saturday', 'sunday'
       ]
       validDays.forEach( async (day) => {
-        const res = await request(server).get('/api/genres/' + day);
+        const res = await request(server).get('/api/meals/' + day);
         expect(res.status).toBe(200)
       })
 
     })
+    it('should return meals for that day if input is valid', async () => {
+      await Meal.collection.insertMany([
+        { name: 'banga soup', day: 'friday' },
+        { name: 'jellof rice', day: 'tuesday' },
+        { name: 'ofe akwu', day: 'tuesday' },
+      ])
+
+      const res = await request(server).get('/api/meals/tuesday');
+
+      expect(res.body.length).toBe(2);
+      res.body.forEach((meal) => {
+        expect(meal).toHaveProperty('name', meal.name)
+        expect(meal).toHaveProperty('day', meal.day)
+      })
     
+    })
   })
 
   describe('POST /', () => {
