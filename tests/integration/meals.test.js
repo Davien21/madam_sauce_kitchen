@@ -215,10 +215,106 @@ describe('/api/meals', () => {
 
       expect(res.status).toBe(404)
     })
+    it(('should return 400 if name is falsy'), async () => {
+      newName = "";
+
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    })
+    it(('should return 400 if day is falsy'), async () => {
+      newDay = "";
+      
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+    it(('should return 400 if day is not a valid day of the week'), async () => {
+      newDay = 'bad day'
+      
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+    it(('should update meal if inputs are valid'), async () => {
+      await exec();
+      
+      const mealInDB = await Meal.lookup(newName, newDay)
+      
+      expect(mealInDB).not.toBeNull()
+      expect(mealInDB).toMatchObject({name: newName, day: newDay})
+    })
+    it(('should return meal after update'), async () => {
+      const res = await exec();
+
+      expect(res.body).toHaveProperty('_id');
+      expect(res.body).toHaveProperty('name', newName);
+      expect(res.body).toHaveProperty('day', newDay);
+    
+    })
+  
+  })
+
+  describe('DELETE /:id', () => {
+    let token;
+    let meal;
+    let id;
+
+    const exec = async () => {
+      return await request(server)
+       .delete('/api/meals/' + id)
+       .set('x-auth-token', token)
+       .send()
+    }
+
+    beforeEach( async () => {
+      // Before each test we need to create a meal and 
+      // put it in the database.
+      meal = new meal({ name: 'meal1' });
+      await meal.save();
+
+      token = new Admin().generateAuthToken();     
+      id = meal._id; 
+    })
+    it('should return 401 if client is not logged in', async () => {
+      token = '';
+
+      const res =  await exec();
+      
+      expect(res.status).toBe(401);
+    })
    
+
+    it('should return 404 for invalid id', async () => {
+      id = 1;
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+    it('should return 404 if id is valid but meal does not exist', async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+     
+    it('should remove meal if id is valid and meal exists', async () => {
+      await exec();
+      
+      const mealInDB = await meal.findById(meal._id);
+
+      expect(mealInDB).toBeNull();
+    })
+    it('should return the removed meal if input is valid', async () => {
+      const res = await exec();
+
+      expect(res.body).toHaveProperty('_id');
+      expect(res.body).toHaveProperty('name', name);
+      expect(res.body).toHaveProperty('day', day);
+    })
   })
 
 })
-// Remaining tests:
-// return 400 if name is less than 5 characters
-// return 400 if name is more than 50 characters
+ 
