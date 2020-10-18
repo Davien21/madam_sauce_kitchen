@@ -20,6 +20,10 @@ router.get('/:day', async (req, res) => {
   res.send(mealsForTheDay)
 })
 
+router.get('/:id', async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(404).send('Invalid Id')
+  
+})
 
 router.post('/', [auth, validateBody(validateMeal)], async (req, res) => {
   const mealInDB = await Meal.lookup(req.body.name, req.body.day)
