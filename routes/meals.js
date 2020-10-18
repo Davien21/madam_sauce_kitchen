@@ -5,28 +5,28 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose')
 router.get('/', async (req, res) => {
-  let meal = await Meal.find().sort('name')
-  meal = sortByDays(meal)
-	res.send(meal);
-})
-
-router.get('/:day', async (req, res) => {
-  const validDays = [
-    'monday', 'tuesday', 'wednesday', 
-    'thursday', 'friday', 'saturday', 'sunday'
-  ]
-  if (!validDays.includes(req.params.day)) return res.status(404).send('Invalid day')
-  const mealsForTheDay = await Meal.find({ day: req.params.day}).sort('name').select('name')
-  res.send(mealsForTheDay)
+  let meals;
+  if (req.query.day) {
+    const validDays = [
+      'monday', 'tuesday', 'wednesday', 
+      'thursday', 'friday', 'saturday', 'sunday'
+    ]
+    if (!validDays.includes(req.query.day)) return res.status(404).send('Invalid day')
+    meals = await Meal.find({ day: req.query.day}).sort('name').select('name day')
+  }
+  if (!req.query.day) meals = await Meal.find().sort('name').select('name day')
+  meals = sortByDays(meals)
+	res.send(meals);
 })
 
 router.get('/:id', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(404).send('Invalid Id')
-  
+
   const meal = await Meal.findById(req.params.id).select('name day')
 
 	if (!meal) return res.status(404).send('Invalid Meal')
 
+  res.send(meal)
 })
 
 router.post('/', [auth, validateBody(validateMeal)], async (req, res) => {
