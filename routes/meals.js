@@ -16,13 +16,17 @@ router.get('/:day', async (req, res) => {
     'thursday', 'friday', 'saturday', 'sunday'
   ]
   if (!validDays.includes(req.params.day)) return res.status(404).send('Invalid day')
-  const mealsForTheDay = await Meal.find({ day: req.params.day}).sort('name')
+  const mealsForTheDay = await Meal.find({ day: req.params.day}).sort('name').select('name')
   res.send(mealsForTheDay)
 })
 
 router.get('/:id', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(404).send('Invalid Id')
   
+  const meal = await Meal.findById(req.params.id).select('name day')
+
+	if (!meal) return res.status(404).send('Invalid Meal')
+
 })
 
 router.post('/', [auth, validateBody(validateMeal)], async (req, res) => {
