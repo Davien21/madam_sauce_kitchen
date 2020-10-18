@@ -30,9 +30,10 @@ describe('/api/meals', () => {
       })
     })
   })
+  
   describe('GET /?day', () => {
     it('should return 400 if day is invalid', async () => {
-      const res = await request(server).get('/api/meals/?day=mahd');
+      const res = await request(server).get('/api/meals/?day=mahd oh');
 
       expect(res.status).toBe(400);
     })
@@ -63,14 +64,9 @@ describe('/api/meals', () => {
       })
     
     })
-  
   })
  
-
   describe('GET /:id', () => {
-    // return 404 if id is invalid
-    // return 404 if meal with given id does not exist
-    // return 200 if meal with given id exists
     // return meal in the response body
     it('should return 404 if id is invalid', async () => {
       const res = await request(server).get('/api/meals/1');
@@ -97,6 +93,20 @@ describe('/api/meals', () => {
       const res = await request(server).get('/api/meals/' + mealId);
 
       expect(res.status).toBe(200);
+    })
+    it('should return meal in body of the response if id is valid', async () => {
+      let mealId = mongoose.Types.ObjectId()
+
+      const meal = new Meal({
+        _id: mealId,
+        name: 'chidi',
+        day: 'sunday'
+      })
+      await meal.save()
+
+      const res = await request(server).get('/api/meals/' + mealId);
+
+      expect(res.body).toMatchObject({name: 'chidi', day: 'sunday'});
     })
    
   })
