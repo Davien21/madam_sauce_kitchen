@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "jest --env=node --watchAll --verbose --runInBand --coverage"
+    "test": "jest --env=node --watchAll --verbose --coverage --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +14,6 @@
     "config": "^3.3.1",
     "express": "^4.17.1",
     "express-async-errors": "^2.1.0",
-    "handlebars": "^4.7.6",
     "joi": "^13.1.0",
     "jsonwebtoken": "^8.1.1",
     "lodash": "^4.17.20",
@@ -22,6 +21,7 @@
     "winston": "^2.4.0"
   },
   "devDependencies": {
+    "handlebars": "^4.5.0",
     "jest": "^22.2.2",
     "supertest": "^3.0.0"
   }
