@@ -66,6 +66,15 @@ describe('/api/meals', () => {
     })
   })
 
+  describe('GET /:id', () => {
+    it('should return 404 if id is invalid', async () => {
+      const res = await request(server).get('/api/meals/1');
+
+      expect(res.status).toBe(404);
+    })
+   
+  })
+
   describe('POST /', () => {
     let token;
     let name;
