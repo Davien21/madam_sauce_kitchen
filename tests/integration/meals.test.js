@@ -67,8 +67,19 @@ describe('/api/meals', () => {
   })
 
   describe('GET /:id', () => {
+    // return 404 if id is invalid
+    // return 404 if meal with given id does not exist
+    // return 200 if meal with given id exists
+    // return meal with given id exists
     it('should return 404 if id is invalid', async () => {
       const res = await request(server).get('/api/meals/1');
+
+      expect(res.status).toBe(404);
+    })
+    it('should return 404 if meal with given id does not exist', async () => {
+      let mealId = mongoose.Types.ObjectId()
+      
+      const res = await request(server).get('/api/meals/' + mealId);
 
       expect(res.status).toBe(404);
     })
