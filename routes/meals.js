@@ -45,5 +45,12 @@ router.put('/:id', [auth, validateObjectId, validateBody(validateMeal)], async (
   res.send(meal);
 })
 
+router.delete('/:id', [auth, validateObjectId], async (req, res) => {
+  const meal = await Meal.findByIdAndDelete(req.params.id)
+
+  if(!meal) return res.status(404).send('Invalid Meal')
+
+  res.send(meal);
+})
 
 module.exports = router;
