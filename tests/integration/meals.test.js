@@ -183,7 +183,7 @@ describe('/api/meals', () => {
     let newDay;
     let meal;
 
-    beforeEach( () => {
+    beforeEach( async () => {
       // Before each test we need to create a meal and 
       // put it in the database.
       meal = new Meal({ name: 'chidi', day: 'monday' })
