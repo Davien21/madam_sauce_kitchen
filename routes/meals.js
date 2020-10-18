@@ -1,22 +1,18 @@
 const { Meal, validateMeal, sortByDays } = require('../models/meal')
 const auth = require('../middleware/auth')
 const validateBody = require('../middleware/validateBody')
+const validateDay = require('../middleware/validateDay')
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose')
-router.get('/', async (req, res) => {
+router.get('/', validateDay, async (req, res) => {
   let meals;
-  if (req.query.day) {
-    const validDays = [
-      'monday', 'tuesday', 'wednesday', 
-      'thursday', 'friday', 'saturday', 'sunday'
-    ]
-    if (!validDays.includes(req.query.day)) return res.status(404).send('Invalid day')
+  if (req.query.day) 
     meals = await Meal.find({ day: req.query.day}).sort('name').select('name day')
-  }
+  
   if (!req.query.day) meals = await Meal.find().sort('name').select('name day')
-  meals = sortByDays(meals)
-	res.send(meals);
+ 
+	res.send( sortByDays(meals) );
 })
 
 router.get('/:id', async (req, res) => {
