@@ -2,6 +2,7 @@ const { Meal, validateMeal, sortByDays } = require('../models/meal')
 const auth = require('../middleware/auth')
 const validateBody = require('../middleware/validateBody')
 const validateDay = require('../middleware/validateDay')
+const validateObjectId = require('../middleware/validateObjectId')
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose')
@@ -15,16 +16,14 @@ router.get('/', validateDay, async (req, res) => {
 	res.send( sortByDays(meals) );
 })
 
-router.get('/:id', async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(404).send('Invalid Id')
-
+router.get('/:id', validateObjectId, async (req, res) => {
   const meal = await Meal.findById(req.params.id).select('name day')
 
 	if (!meal) return res.status(404).send('Invalid Meal')
 
   res.send(meal)
 })
-
+ 
 router.post('/', [auth, validateBody(validateMeal)], async (req, res) => {
   const mealInDB = await Meal.lookup(req.body.name, req.body.day)
 
