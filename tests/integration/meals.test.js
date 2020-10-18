@@ -67,44 +67,40 @@ describe('/api/meals', () => {
   })
  
   describe('GET /:id', () => {
-    // return meal in the response body
+    let meal;
+    let mealId;
+
+    beforeEach( async () => {
+      meal = new Meal({ name: 'chidi', day: 'sunday' })
+      mealId = meal._id
+      await meal.save()
+    })
+
+    const exec = async () => {
+      return request(server)
+      .get('/api/meals/' + mealId);
+    }
     it('should return 404 if id is invalid', async () => {
-      const res = await request(server).get('/api/meals/1');
+      mealId = 1;
+
+      const res = await exec();
 
       expect(res.status).toBe(404);
     })
     it('should return 404 if meal with given id does not exist', async () => {
-      let mealId = mongoose.Types.ObjectId()
+      mealId = mongoose.Types.ObjectId();
 
-      const res = await request(server).get('/api/meals/' + mealId);
+      const res = await exec();
 
       expect(res.status).toBe(404);
     })
     it('should return 200 if meal with given id exists', async () => {
-      let mealId = mongoose.Types.ObjectId()
-
-      const meal = new Meal({
-        _id: mealId,
-        name: 'chidi',
-        day: 'sunday'
-      })
-      await meal.save()
-
-      const res = await request(server).get('/api/meals/' + mealId);
+      const res = await exec();
 
       expect(res.status).toBe(200);
     })
     it('should return meal in body of the response if id is valid', async () => {
-      let mealId = mongoose.Types.ObjectId()
-
-      const meal = new Meal({
-        _id: mealId,
-        name: 'chidi',
-        day: 'sunday'
-      })
-      await meal.save()
-
-      const res = await request(server).get('/api/meals/' + mealId);
+      const res = await exec();
 
       expect(res.body).toMatchObject({name: 'chidi', day: 'sunday'});
     })
@@ -121,10 +117,7 @@ describe('/api/meals', () => {
       
       name = 'chidi'
       day = 'monday'
-      meal = new Meal({
-        name,
-        day
-      })
+      meal = new Meal({ name, day })
       token = new Admin().generateAuthToken();
     })
     const exec = () => {
@@ -182,6 +175,37 @@ describe('/api/meals', () => {
       expect(mealInDB).not.toBeNull()
       expect(mealInDB).toMatchObject({name, day})
     })
+  })
+  
+  describe('PUT /:id', () => {
+    let token;
+    let newName;
+    let newDay;
+    let meal;
+
+    beforeEach( () => {
+      // Before each test we need to create a meal and 
+      // put it in the database.
+      meal = new Meal({ name: 'chidi', day: 'monday' })
+
+      await meal.save();
+      
+      token = new Admin().generateAuthToken();
+    })
+    const exec = () => {
+      return request(server)
+        .put('/api/meals')
+        .set('x-auth-token', token)
+        .send({ name: newName, day: newDay})
+    }
+    it(('should return 401 if not logged in'), async () => {
+      token = "";
+
+      const res = await exec();
+
+      expect(res.status).toBe(401)
+    })
+    
   })
 
 })
