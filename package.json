@@ -13,6 +13,7 @@
     "bcrypt": "^3.0.5",
     "config": "^3.3.1",
     "express": "^4.17.1",
+    "express-async-errors": "^2.1.0",
     "handlebars": "^4.7.6",
     "joi": "^13.1.0",
     "jsonwebtoken": "^8.1.1",
