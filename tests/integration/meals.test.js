@@ -179,6 +179,7 @@ describe('/api/meals', () => {
   
   describe('PUT /:id', () => {
     let token;
+    let id;
     let newName;
     let newDay;
     let meal;
@@ -187,14 +188,16 @@ describe('/api/meals', () => {
       // Before each test we need to create a meal and 
       // put it in the database.
       meal = new Meal({ name: 'chidi', day: 'monday' })
-
       await meal.save();
       
       token = new Admin().generateAuthToken();
+      id = meal._id
+      newName = 'chin-chin'
+      newDay = 'sunday'
     })
     const exec = () => {
       return request(server)
-        .put('/api/meals')
+        .put('/api/meals/' + id)
         .set('x-auth-token', token)
         .send({ name: newName, day: newDay})
     }
@@ -205,7 +208,14 @@ describe('/api/meals', () => {
 
       expect(res.status).toBe(401)
     })
-    
+    it(('should return 404 if id is invalid'), async () => {
+      id = ''
+
+      const res = await exec();
+
+      expect(res.status).toBe(404)
+    })
+   
   })
 
 })
