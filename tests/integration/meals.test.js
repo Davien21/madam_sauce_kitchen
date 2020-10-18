@@ -30,7 +30,18 @@ describe('/api/meals', () => {
       expect(res.body.some(g => g.day === 'tuesday')).toBeTruthy()
     
     })
-   })
+  })
+  
+  describe('GET /:day', () => {
+    // return 404 if day is invalid
+    // return 200 if the day is a valid day of the week
+    // return meals for that day if input is valid
+    it('should return 404 if day is invalid', async () => {
+      const res = await request(server).get('/api/genres/mahd');
+
+      expect(res.status).toBe(404);
+    })
+  })
 
   describe('POST /', () => {
     let token;
