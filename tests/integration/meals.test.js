@@ -270,7 +270,7 @@ describe('/api/meals', () => {
     beforeEach( async () => {
       // Before each test we need to create a meal and 
       // put it in the database.
-      meal = new meal({ name: 'meal1' });
+      meal = new Meal({ name: 'meal1', day: 'sunday' });
       await meal.save();
 
       token = new Admin().generateAuthToken();     
@@ -303,16 +303,16 @@ describe('/api/meals', () => {
     it('should remove meal if id is valid and meal exists', async () => {
       await exec();
       
-      const mealInDB = await meal.findById(meal._id);
+      const mealInDB = await Meal.findById(meal._id);
 
       expect(mealInDB).toBeNull();
     })
     it('should return the removed meal if input is valid', async () => {
       const res = await exec();
-
+      
       expect(res.body).toHaveProperty('_id');
-      expect(res.body).toHaveProperty('name', name);
-      expect(res.body).toHaveProperty('day', day);
+      expect(res.body).toHaveProperty('name', 'meal1');
+      expect(res.body).toHaveProperty('day', 'sunday');
     })
   })
 
