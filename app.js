@@ -2,13 +2,27 @@ const winston = require('winston');
 const express = require('express');
 const app = express();
 
+require('express-async-errors');
+
+winston.handleExceptions(
+  new winston.transports.Console({ colorize: true, prettyPrint: true }),
+  new winston.transports.File({ filename: 'uncaughtExceptions.log'}))
+ 
+process.on('unhandledRejection', (ex)=> {
+  throw ex; 
+})
+winston.add(winston.transports.File, { filename: 'logfile.log' });
+
 require('./startup/db')();
 
 const meals = require('./routes/meals')
+const error = require('./middleware/error')
 
 app.use(express.json());
 app.use('/api/meals', meals) // use the meals router;
-
+ 
+//error middleware
+app.use(error);
 
 const port = process.env.PORT || 3000;
 
