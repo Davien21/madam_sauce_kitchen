@@ -1,11 +1,13 @@
 const { Meal, validateMeal, sortByDays } = require('../models/meal')
+
 const auth = require('../middleware/auth')
 const validateBody = require('../middleware/validateBody')
 const validateDay = require('../middleware/validateDay')
 const validateObjectId = require('../middleware/validateObjectId')
+
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose')
+
 router.get('/', validateDay, async (req, res) => {
   let meals;
   if (req.query.day) 
