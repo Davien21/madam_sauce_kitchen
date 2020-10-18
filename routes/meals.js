@@ -35,5 +35,15 @@ router.post('/', [auth, validateBody(validateMeal)], async (req, res) => {
   res.send(meal);
 })
 
+router.put('/:id', [auth, validateObjectId, validateBody(validateMeal)], async (req, res) => {
+  const meal = await Meal.findByIdAndUpdate(req.params.id, {
+    name: req.body.name, day: req.body.day
+  }, { new: true })
+
+  if(!meal) return res.status(404).send('Invalid Meal')
+
+  res.send(meal);
+})
+
 
 module.exports = router;
