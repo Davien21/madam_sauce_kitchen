@@ -41,6 +41,18 @@ describe('/api/meals', () => {
 
       expect(res.status).toBe(404);
     })
+    it('should return 200 if the day is a valid day of the week', async () => {
+      const validDays = [
+        'monday', 'tuesday', 'wednesday', 
+        'thursday', 'friday', 'saturday', 'sunday'
+      ]
+      validDays.forEach( async (day) => {
+        const res = await request(server).get('/api/genres/' + day);
+        expect(res.status).toBe(200)
+      })
+
+    })
+    
   })
 
   describe('POST /', () => {
