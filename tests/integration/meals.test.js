@@ -30,10 +30,9 @@ describe('/api/meals', () => {
       })
     })
   })
-  
-  describe('GET /:day', () => {
+  describe('GET /?day', () => {
     it('should return 404 if day is invalid', async () => {
-      const res = await request(server).get('/api/meals/mahd');
+      const res = await request(server).get('/api/meals/?day=mahd');
 
       expect(res.status).toBe(404);
     })
@@ -43,7 +42,7 @@ describe('/api/meals', () => {
         'thursday', 'friday', 'saturday', 'sunday'
       ]
       validDays.forEach( async (day) => {
-        const res = await request(server).get('/api/meals/' + day);
+        const res = await request(server).get('/api/meals/?day=' + day);
         expect(res.status).toBe(200)
       })
 
@@ -55,7 +54,7 @@ describe('/api/meals', () => {
         { name: 'ofe akwu', day: 'tuesday' },
       ])
 
-      const res = await request(server).get('/api/meals/tuesday');
+      const res = await request(server).get('/api/meals/?day=tuesday');
 
       expect(res.body.length).toBe(2);
       res.body.forEach((meal) => {
@@ -64,13 +63,15 @@ describe('/api/meals', () => {
       })
     
     })
+  
   })
+ 
 
   describe('GET /:id', () => {
     // return 404 if id is invalid
     // return 404 if meal with given id does not exist
     // return 200 if meal with given id exists
-    // return meal with given id exists
+    // return meal in the response body
     it('should return 404 if id is invalid', async () => {
       const res = await request(server).get('/api/meals/1');
 
@@ -78,10 +79,24 @@ describe('/api/meals', () => {
     })
     it('should return 404 if meal with given id does not exist', async () => {
       let mealId = mongoose.Types.ObjectId()
-      
+
       const res = await request(server).get('/api/meals/' + mealId);
 
       expect(res.status).toBe(404);
+    })
+    it('should return 200 if meal with given id exists', async () => {
+      let mealId = mongoose.Types.ObjectId()
+
+      const meal = new Meal({
+        _id: mealId,
+        name: 'chidi',
+        day: 'sunday'
+      })
+      await meal.save()
+
+      const res = await request(server).get('/api/meals/' + mealId);
+
+      expect(res.status).toBe(200);
     })
    
   })
