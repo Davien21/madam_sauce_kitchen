@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const validateBody = require('../middleware/validateBody')
 const express = require('express');
 const router = express.Router();
-
+const mongoose = require('mongoose')
 router.get('/', async (req, res) => {
   let meal = await Meal.find().sort('name')
   meal = sortByDays(meal)
@@ -16,8 +16,10 @@ router.get('/:day', async (req, res) => {
     'thursday', 'friday', 'saturday', 'sunday'
   ]
   if (!validDays.includes(req.params.day)) return res.status(404).send('Invalid day')
-  res.send()
+  const mealsForTheDay = await Meal.find({ day: req.params.day}).sort('name')
+  res.send(mealsForTheDay)
 })
+
 
 router.post('/', [auth, validateBody(validateMeal)], async (req, res) => {
   const mealInDB = await Meal.lookup(req.body.name, req.body.day)
