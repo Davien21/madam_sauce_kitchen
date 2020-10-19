@@ -1,4 +1,6 @@
 const config = require('config')
+const passwordComplexity = require('joi-password-complexity');
+
 const jwt = require('jsonwebtoken'); 
 const Joi = require('joi');
 const mongoose = require('mongoose');
@@ -36,12 +38,21 @@ model.Admin = mongoose.model('Admin', model.adminSchema)
 
 model.validateAdmin = (admin) => {
   const schema = {
-    name: Joi.string().min(3).max(50).required(),
+    name: Joi.string().min(5).max(255).required(),
     email: Joi.string().min(5).max(255).required().email(),
     password: new passwordComplexity().required(),
   };
-  return schema.validate(admin, schema);
+  let result = Joi.validate(admin, schema) 
+  if (result.error && result.error.details[0].type === 'passwordComplexity.base')
+      result.error.details[0].message = model.customPasswordError
+  
+  return result;
 } 
+
+model.customPasswordError = 
+  "Password must have the following:\n"+
+  "Min of 8 and max of 26 characters\n"+
+  "At least 1 Lowercase, Uppercase letter, number and symbol"
 
 module.exports = model;
 
