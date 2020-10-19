@@ -17,6 +17,7 @@ describe('/api/admins', () => {
     let email;
     let password;
     let admin;
+    let token;
     beforeEach( async () => {
       name = 'chidiebere ekennia'
       email = 'chidiebereekennia@gmail.com'
@@ -25,6 +26,8 @@ describe('/api/admins', () => {
       admin = new Admin({
         name, email, password
       })
+      token =  admin.generateAuthToken();
+
     })
     const exec = () => {
       return request(server)
@@ -93,6 +96,11 @@ describe('/api/admins', () => {
       const adminInDB = await Admin.findOne({email})
 
       expect(adminInDB).toMatchObject({name, email})
+    })
+    it('should return header for auth token', async () => {
+      const res = await exec();
+
+      expect(res.header).toHaveProperty('x-auth-token')
     })
     it('should return admin to body of response', async () => {
       const res = await exec();
