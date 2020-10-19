@@ -39,4 +39,13 @@ router.put('/:id', [auth, validateObjectId, validateBody(validateAdmin)], async 
 	res.send(admin);
 })
 
+router.delete('/:id', [auth, validateObjectId], async (req, res) => {
+  const admin = await Admin.findByIdAndDelete(req.params.id)
+
+  if(!admin) return res.status(404).send('Invalid Admin')
+
+  res.send(admin);
+})
+
+
 module.exports = router;
