@@ -6,10 +6,15 @@ model.mealSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength : 5, 
-		maxlength : 50,
+    maxlength : 50,
+    required: true,
   },
   day: {
     type: String,
+  },
+  price: {
+    type: Number,
+    required: true,
   }
 })
 
@@ -36,7 +41,8 @@ model.validateMeal = (meal) => {
     .valid(
       'monday', 'tuesday', 'wednesday', 
       'thursday', 'friday', 'saturday', 'sunday'
-    ).required().insensitive()
+    ).required().insensitive(),
+    price: Joi.number().required()
   }
 	return result = Joi.validate(meal,schema);
 } 
