@@ -21,7 +21,7 @@ router.post('/', [validateBody(validateAdmin)], async (req,res) => {
   await admin.save();
   
   const token =  admin.generateAuthToken();
-	res.header('x-auth-token',token).send();
+	res.header('x-auth-token',token).send(_.pick(admin,['_id','name','email']));
 })
 
 module.exports = router;
