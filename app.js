@@ -8,10 +8,12 @@ require('./startup/db')();
 require('./startup/logging')();
 
 const meals = require('./routes/meals')
+const admins = require('./routes/admins')
 const error = require('./middleware/error')
 
 app.use(express.json());
 app.use('/api/meals', meals) // use the meals router;
+app.use('/api/admins', admins) // use the admins router;
  
 //error middleware
 app.use(error);
@@ -28,13 +30,4 @@ module.exports = server;
 
 
 
-// Set up testing for app.js
-// Install and import express
-// Create an HTTP Server
-// Export app for testing
-// Set up a startup folder for running the app
-// Set up error logging
-// Set up routing
-// Set up startup folder
-// Set up config / env variables
 // Set up middleware: auth, admin, validate, etc.
