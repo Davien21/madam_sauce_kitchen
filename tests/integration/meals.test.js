@@ -206,6 +206,13 @@ describe('/api/meals', () => {
 
       expect(res.status).toBe(404)
     })
+    it(('should return 404 if meal with given id is not found'), async () => {
+      id = mongoose.Types.ObjectId()
+
+      const res = await exec();
+
+      expect(res.status).toBe(404)
+    })
     it(('should return 400 if name is falsy'), async () => {
       newName = "";
 
