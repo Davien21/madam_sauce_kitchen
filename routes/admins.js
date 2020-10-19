@@ -1,5 +1,4 @@
 const { Admin, validateAdmin } = require('../models/admin')
-const passwordComplexity = require('joi-password-complexity');
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
