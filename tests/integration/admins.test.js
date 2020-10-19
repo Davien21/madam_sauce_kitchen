@@ -1,6 +1,6 @@
 const { Admin, customPasswordError } = require('../../models/admin')
 const request = require('supertest');
-
+const mongoose = require('mongoose')
 
 describe('/api/admins', () => {
   let server = require('../../app')
@@ -10,6 +10,28 @@ describe('/api/admins', () => {
     await server.close(); 
     await Admin.deleteMany({})
     
+  })
+
+  describe('GET /', () => {
+    it('should return all admins', async () => {
+      
+      await Admin.collection.insertMany([
+        { name: 'chidi ekennia', email: 'chidiekennia@gmail.com',
+          password: 'okeKE123!'
+        }, 
+        { name: 'Oga Emma', email: 'sinzumoney@gmail.com',
+          password: 'iEatCode123!'
+        }
+      ])
+
+      const res = await request(server).get('/api/admins').send()
+
+      expect(res.status).toBe(200)
+      expect(res.body.length).toBe(2);
+      res.body.forEach((admin) => {
+        expect(admin).toHaveProperty('name', admin.name)
+      })
+    })
   })
 
   describe('POST /', () => {
