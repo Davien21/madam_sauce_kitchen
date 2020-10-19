@@ -10,6 +10,12 @@ const validateObjectId = require('../middleware/validateObjectId')
 const express = require('express');
 const router = express.Router();
  
+
+router.get('/', async (req,res) => {
+	const admin = await Admin.find().sort('name').select('name')
+	res.send(admin);
+})
+
 router.post('/', [validateBody(validateAdmin)], async (req,res) => {
   let admin =  await Admin.findOne({ email: req.body.email});
   if (admin) return res.status(400).send('Admin already exists');
