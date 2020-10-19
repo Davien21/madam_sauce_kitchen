@@ -15,6 +15,12 @@ router.get('/', async (req,res) => {
 	res.send(admin);
 })
 
+router.get('/:id', validateObjectId, async (req,res) => {
+	const admin = await Admin.findOne({ _id : req.params.id }).select('name')
+	if (!admin) return res.status(404).send('Admin'); 
+	res.send(admin);
+})
+
 router.post('/', [validateBody(validateAdmin)], async (req,res) => {
   let admin =  await Admin.findOne({ email: req.body.email});
   if (admin) return res.status(400).send('Admin already exists');
