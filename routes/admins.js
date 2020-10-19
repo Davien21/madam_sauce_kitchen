@@ -11,7 +11,9 @@ const express = require('express');
 const router = express.Router();
  
 router.post('/', [validateBody(validateAdmin)], async (req,res) => {
-  res.send()
-})
+  let admin =  await Admin.findOne({ email: req.body.email});
+  if (admin) return res.status(400).send('Admin already exists');
+  
+  })
 
 module.exports = router;
