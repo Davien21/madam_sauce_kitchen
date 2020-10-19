@@ -37,17 +37,7 @@ describe('/api/meals', () => {
 
       expect(res.status).toBe(400);
     })
-    it('should return 200 if the day is a valid day of the week', async () => {
-      const validDays = [
-        'monday', 'tuesday', 'wednesday', 
-        'thursday', 'friday', 'saturday', 'sunday'
-      ]
-      validDays.forEach( async (day) => {
-        const res = await request(server).get('/api/meals/?day=' + day);
-        expect(res.status).toBe(200)
-      })
-
-    })
+   
     it('should return meals for that day if input is valid', async () => {
       await Meal.collection.insertMany([
         { name: 'banga soup', day: 'friday' },
@@ -57,6 +47,7 @@ describe('/api/meals', () => {
 
       const res = await request(server).get('/api/meals/?day=tuesday');
 
+      expect(res.status).toBe(200)
       expect(res.body.length).toBe(2);
       res.body.forEach((meal) => {
         expect(meal).toHaveProperty('name', meal.name)
