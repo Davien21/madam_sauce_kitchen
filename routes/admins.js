@@ -19,7 +19,9 @@ router.post('/', [validateBody(validateAdmin)], async (req,res) => {
   admin.password = await bcrypt.hash(admin.password,salt);
 
   await admin.save();
-  res.send()
+  
+  const token =  admin.generateAuthToken();
+	res.header('x-auth-token',token).send();
 })
 
 module.exports = router;
