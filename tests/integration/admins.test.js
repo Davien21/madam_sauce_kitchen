@@ -267,4 +267,69 @@ describe('/api/admins', () => {
     })
     
   })
+
+  describe('DELETE /:id', () => {
+    let token;
+    let admin;
+    let id;
+
+    const exec = async () => {
+      return await request(server)
+       .delete('/api/admins/' + id)
+       .set('x-auth-token', token)
+       .send()
+    }
+
+    beforeEach( async () => {
+      // Before each test we need to create a admin and 
+      // put it in the database.
+      admin = new Admin({ 
+        name: 'chidi ekennia', email: 'chidiekennia@gmail.com',
+        password: 'okeKE123!'
+      })
+      await admin.save();
+
+      token = new Admin().generateAuthToken();     
+      id = admin._id; 
+    })
+    it('should return 401 if client is not logged in', async () => {
+      token = '';
+
+      const res =  await exec();
+      
+      expect(res.status).toBe(401);
+    })
+   
+
+    it('should return 404 for invalid id', async () => {
+      id = 1;
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+    it('should return 404 if id is valid but admin does not exist', async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+     
+    it('should remove admin if id is valid and admin exists', async () => {
+      await exec();
+      
+      const adminInDB = await Admin.findById(admin._id);
+
+      expect(adminInDB).toBeNull();
+    })
+    it('should return the removed admin to request body if input is valid', async () => {
+      const res = await exec();
+      
+      expect(res.body).toHaveProperty('_id');
+      expect(res.body).toHaveProperty('name', 'chidi ekennia');
+      expect(res.body).toHaveProperty('email', 'chidiekennia@gmail.com');
+    })
+  })
+
 })
