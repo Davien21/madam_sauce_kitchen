@@ -33,7 +33,52 @@ describe('/api/admins', () => {
       })
     })
   })
- 
+  
+  describe('GET /:id', () => {
+    let admin;
+    let adminId;
+
+    beforeEach( async () => {
+      admin = new Admin({ 
+        name: 'chidi ekennia', email: 'chidiekennia@gmail.com',
+        password: 'okeKE123!'
+      })
+      adminId = admin._id
+      await admin.save()
+    })
+
+    const exec = async () => {
+      return request(server)
+      .get('/api/admins/' + adminId);
+    }
+    it('should return 404 if id is invalid', async () => {
+      adminId = 1;
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+    it('should return 404 if admin with given id does not exist', async () => {
+      adminId = mongoose.Types.ObjectId();
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+    it('should return 200 if admin with given id exists', async () => {
+      const res = await exec();
+
+      expect(res.status).toBe(200);
+    })
+    it("should return admin's in body of the response if id is valid", async () => {
+      const res = await exec();
+
+      expect(res.body).toMatchObject({ name: 'chidi ekennia' });
+    })
+   
+  })
+
+
   describe('POST /', () => {
     let name;
     let email;
