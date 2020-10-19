@@ -1,44 +1,77 @@
 const { Admin } = require('../../models/admin');
 const request = require('supertest');
+let server;
+const bcrypt = require('bcrypt');
 
-describe('auth middleware', () => {
+describe('/api/auth/', () => {
   beforeEach(() => { server = require('../../app'); })
   afterEach(async () => { 
     await server.close(); 
+    await Admin.deleteMany({})
   });
 
-  let token; 
+  describe('POST /', () => {
+    
+    let token; 
+    let admin;
+    let email;
+    let password;
+    beforeEach( async () => {
+      const salt = await bcrypt.genSalt(10);
+      email = "sinzumoney@gmail.com"
+      password = "okEKE123!"
+      let hashedPassword = await bcrypt.hash(password, salt);
 
-  const exec = () => {
-    return request(server)
-      .post('/api/meals')
-      .set('x-auth-token', token)
-      .send({ name: 'chidi', day: 'monday' });
-  }
+      admin = new Admin({ name: 'oga emma', email, password: hashedPassword })
+      await admin.save()
+      token = admin.generateAuthToken();
+    });
 
-  beforeEach(() => {
-    token = new Admin().generateAuthToken();
-  });
+    const exec = () => {
+      return request(server)
+        .post('/api/auth/')
+        .send({ email, password });
+    }
 
-  it('should return 401 if no token is provided', async () => {
-    token = ''; 
+    it('should return 400 if email is falsy', async () => {
+      email = ''
 
-    const res = await exec();
+      const res = await exec();
 
-    expect(res.status).toBe(401);
-  });
+      expect(res.status).toBe(400)
+    })
 
-  it('should return 400 if token is invalid', async () => {
-    token = 'a'; 
+    it('should return 400 if password is falsy', async () => {
+      password = ''
 
-    const res = await exec();
+      const res = await exec();
 
-    expect(res.status).toBe(400);
-  });
+      expect(res.status).toBe(400)
+    })
+    it('should return 400 if admin does not exist', async () => {
+      email = 'danielekennia@gmail.com'
 
-  it('should return 200 if token is valid', async () => {
-    const res = await exec();
+      const res = await exec();
 
-    expect(res.status).toBe(200);
-  });
-});
+      expect(res.status).toBe(400)
+    })
+    it('should return 400 if password does not match', async () => {
+      password = 'ezraLikesBoys123!';
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+    it('should return 200 if admin with given input exists', async () => {
+      const res = await exec();
+
+      expect(res.status).toBe(200)
+    })
+    it('should return auth Token in response body if input is valid', async () => {
+      const res = await exec();
+
+      expect(res.body).toMatchObject({authToken: token})
+    })
+    
+  })
+})
