@@ -30,4 +30,13 @@ router.post('/', [validateBody(validateAdmin)], async (req,res) => {
 	res.header('x-auth-token',token).send(_.pick(admin,['_id','name','email']));
 })
 
+router.put('/:id', [auth, validateObjectId, validateBody(validateAdmin)], async (req,res) => {
+  const admin = await Admin.findByIdAndUpdate(req.params.id, 
+    _.pick(req.body,['name','email','password']), {	new : true }
+  )
+  
+	if (!admin) return res.status(404).send('Invalid Admin'); 
+	res.send(admin);
+})
+
 module.exports = router;
