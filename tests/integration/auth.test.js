@@ -16,7 +16,10 @@ describe('/api/auth/', () => {
     let admin;
     let email;
     let password;
+
     beforeEach( async () => {
+      // Before each test create an admin and 
+      // put in the database.
       const salt = await bcrypt.genSalt(10);
       email = "sinzumoney@gmail.com"
       password = "okEKE123!"
@@ -24,6 +27,7 @@ describe('/api/auth/', () => {
 
       admin = new Admin({ name: 'oga emma', email, password: hashedPassword })
       await admin.save()
+      
       token = admin.generateAuthToken();
     });
 
