@@ -14,7 +14,7 @@ describe('/api/admins', () => {
 
   describe('GET /', () => {
     it('should return all admins', async () => {
-      
+
       await Admin.collection.insertMany([
         { name: 'chidi ekennia', email: 'chidiekennia@gmail.com',
           password: 'okeKE123!'
@@ -33,7 +33,7 @@ describe('/api/admins', () => {
       })
     })
   })
-
+ 
   describe('POST /', () => {
     let name;
     let email;
@@ -56,6 +56,7 @@ describe('/api/admins', () => {
         .post('/api/admins')
         .send({ name, email, password })
     }
+
     it('should return 400 if name is falsy', async () => {
       name = ''
 
@@ -63,6 +64,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should return 400 if email is falsy', async () => {
       email = ''
 
@@ -70,6 +72,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should return 400 if password is falsy', async () => {
       email = ''
 
@@ -77,6 +80,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should return 400 if name is less than 5 characters', async () => {
       name = '1234';
 
@@ -84,6 +88,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should return 400 if name is more than 255 characters', async () => {
       name = new Array(257).join('a')
 
@@ -91,6 +96,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should return 400 if email is invalid', async () => {
       email = 'sauce how far now. u don blow oh';
 
@@ -98,6 +104,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should return 400 if password is invalid', async () => {
       password = 'this password no correct sha';
 
@@ -105,6 +112,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should return 400 if admin already exists', async () => {
       await admin.save()
 
@@ -112,6 +120,7 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(400)
     })
+
     it('should save admin if input is valid', async () => {
       await exec();
 
@@ -119,15 +128,143 @@ describe('/api/admins', () => {
 
       expect(adminInDB).toMatchObject({name, email})
     })
+
     it('should return header for auth token', async () => {
       const res = await exec();
 
       expect(res.header).toHaveProperty('x-auth-token')
     })
+
     it('should return admin to body of response', async () => {
       const res = await exec();
 
       expect(res.body).toMatchObject({name, email})
     })
+  })
+
+  describe('PUT /:id', () => {
+    let newName;
+    let newEmail;
+    let newPassword;
+    let admin;
+    let adminId;
+    let token;
+    beforeEach( async () => {
+      // Before each test we create an admin and 
+      // put it in the database.
+      newName = 'osita and pressure'
+      newEmail = 'applyPressure@gmail.com'
+      newPassword = 'osita123!'
+
+      admin = new Admin({ 
+        name: 'chidi ekennia', email: 'chidiekennia@gmail.com',
+        password: 'okeKE123!'
+      })
+
+      token =  admin.generateAuthToken();
+      adminId = admin._id
+      await admin.save()
+    })
+    const exec = async () => {
+      return await request(server)
+       .put('/api/admins/' + adminId)
+       .set('x-auth-token', token)
+       .send({ name: newName, email: newEmail, password: newPassword })
+    }
+
+    it('should return 401 if client is not logged in', async () => {
+      token = '';
+
+      const res =  await exec();
+      
+      expect(res.status).toBe(401);
+    })
+
+    it('should return 404 for invalid id', async () => {
+      adminId = 1;
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+
+    it('should return 404 if id is valid but admin does not exist', async () => {
+      adminId = mongoose.Types.ObjectId();
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+
+    it('should return 400 if name is falsy', async () => {
+      newName = ''
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 if email is falsy', async () => {
+      newEmail = ''
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 if password is falsy', async () => {
+      newPassword = ''
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 if name is less than 5 characters', async () => {
+      newName = '1234';
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 if name is more than 255 characters', async () => {
+      newName = new Array(257).join('a')
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 if email is invalid', async () => {
+      newEmail = 'sauce how far now. u don blow oh';
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 if password is invalid', async () => {
+      newPassword = 'this password no correct sha';
+
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should update admin if input is valid', async () => {
+      const res = await exec();
+
+      const adminInDB = await Admin.findById(admin._id)
+
+      expect(adminInDB).toMatchObject({name: newName, email: newEmail})
+    })
+
+    it('should return updated admin to body of response', async () => {
+      const res = await exec();
+
+      expect(res.body).toMatchObject({name: newName, email: newEmail})
+    })
+    
   })
 })
