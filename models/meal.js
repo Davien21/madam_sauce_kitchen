@@ -8,9 +8,15 @@ model.mealSchema = new mongoose.Schema({
     minlength : 5, 
     maxlength : 50,
     required: true,
+    trim: true,
   },
   day: {
     type: String,
+    enum: [
+      'monday', 'tuesday', 'wednesday', 
+      'thursday', 'friday', 'saturday', 'sunday'
+    ],
+    required: true,
   },
   price: {
     type: Number,
