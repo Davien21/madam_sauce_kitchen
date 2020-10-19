@@ -118,13 +118,19 @@ describe('/api/meals', () => {
         .send({ name, day})
     }
     it(('should return 401 if not logged in'), async () => {
-
       token = "";
 
       const res = await exec();
 
       expect(res.status).toBe(401)
     })
+    it('should return 400 if token is invalid', async () => {
+      token = 'a'; 
+  
+      const res = await exec();
+  
+      expect(res.status).toBe(400);
+    });
     it(('should return 400 if name is falsy'), async () => {
       name = "";
 
