@@ -19,7 +19,7 @@ Anyway...
 There are 4 routes:  
 1. **/api/meals** - used to do CRUD on **Meals**    
 2. **/api/auth** - used to do make a **Login request** (only admins like madam sauce can login)
-3. **/api/admin** - used to do CRUD on **Admins**  
+3. **/api/admins** - used to do CRUD on **Admins**  
 4. **/api/orders** - used to do CRUD on customer **Orders**  
 
 ### 1. /api/meals
