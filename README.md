@@ -8,7 +8,8 @@ Anyway...
 ## How to get started:
 1. npm install (do not npm audit fix if you plan to see test coverage on the web)  
 2. Set **madam_sauce_kitchen_jwtPrivateKey** environment variable to store your private key for Json Web Tokens - **Important!**   
-**For example** You can run this on the terminal:  
+**For example**  
+You can run this on the terminal:   
 ```
 export madam_sauce_kitchen_jwtPrivateKey=mySecureKey
 ```
