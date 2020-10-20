@@ -12,7 +12,7 @@ model.order = new mongoose.Schema({
         trim: true,
       },
       day: { 
-        type: Number, 
+        type: String, 
         enum: [
           'monday', 'tuesday', 'wednesday', 
           'thursday', 'friday', 'saturday', 'sunday'
@@ -65,13 +65,11 @@ model.Order = mongoose.model('Order', model.order)
 
 model.validateOrder = (meal) => {
   const schema = {
-    name: Joi.string().min(5).max(50).required(),
-    day: Joi.string()
-    .valid(
-      'monday', 'tuesday', 'wednesday', 
-      'thursday', 'friday', 'saturday', 'sunday'
-    ).required().insensitive(),
-    price: Joi.number().required()
+    mealId: Joi.objectId().required(),
+    customer: Joi.object({
+      name: Joi.string().min(5).max(50).required(),
+      phone: Joi.string().regex(/^(\+234|0)[7-9]\d{9}$/).required(),
+    }).required(),
   }
 	return result = Joi.validate(meal,schema);
 } 
