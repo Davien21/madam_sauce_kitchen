@@ -108,7 +108,7 @@ Pass a **valid order object** with a valid / existing mealId and a customer obje
     "mealId" : "5f8cbeab6c652065c4bebde9",   
     "customer" : {
         "name" : "Osita supposeLikeFood",
-        "phone" : "07012454621"
+        "phone" : "08072454321"
     } 
 }  
 ```
