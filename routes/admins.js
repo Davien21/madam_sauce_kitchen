@@ -17,7 +17,7 @@ router.get('/', async (req,res) => {
 
 router.get('/:id', validateObjectId, async (req,res) => {
 	const admin = await Admin.findOne({ _id : req.params.id }).select('name')
-	if (!admin) return res.status(404).send('Admin'); 
+	if (!admin) return res.status(404).send('Invalid Admin'); 
 	res.send(admin);
 })
 
