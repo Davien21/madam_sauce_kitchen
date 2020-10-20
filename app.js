@@ -3,8 +3,9 @@ const express = require('express');
 const app = express();
 
 require('./startup/logging')();
-require('./startup/routes')(app);
+require('./startup/config')();
 require('./startup/db')();
+require('./startup/routes')(app);
 require('./startup/joi-objectId-validation')();
  
 const port = process.env.PORT || 3000;
