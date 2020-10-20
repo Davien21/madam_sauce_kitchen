@@ -54,13 +54,6 @@ model.order = new mongoose.Schema({
   }
 })
 
-model.order.statics.lookup = function(name, day) {
-  return this.findOne({
-    "name": name,
-    "day": day
-  })
-}
-
 model.Order = mongoose.model('Order', model.order)
 
 model.validateOrder = (meal) => {
