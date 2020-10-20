@@ -10,7 +10,7 @@ Anyway...
 2. set **madam_sauce_kitchen_jwtPrivateKey** environment variable to store your private key for Json Web Tokens - **Important!**
 
 ## Tests:
-1. set the NODE_ENV environment variable to *test*
+1. Set the NODE_ENV environment variable to **test**
 2. npm test  
 3. open the newly created **coverage/Icov-report/index.html** file to see test coverage on the app  
 
