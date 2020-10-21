@@ -1,9 +1,11 @@
+const _ = require('lodash')
 const { Customer } = require('../../models/customer')
 const { Meal } = require('../../models/meal')
 const { Order } = require('../../models/order')
 const { Admin } = require('../../models/admin')
 const request = require('supertest');
 const mongoose = require('mongoose')
+
 
 describe('/api/admins', () => {
   let server = require('../../app')
@@ -21,11 +23,11 @@ describe('/api/admins', () => {
     beforeEach( async () => {
       await Order.collection.insertMany([
         {
-          order: { name: "chidi", day: "monday", price: 5000 },
+          meal: { name: "chidi", day: "monday", price: 5000 },
           customer: { name: "Jamike Ekennia", phone: "+2347012464621" },
         },
         {
-          order: { name: "chidi", day: "monday", price: 5000 },
+          meal: { name: "chidi", day: "monday", price: 5000 },
           customer: { name: "Jamike Ekennia", phone: "+2347012464621" },
         }
       ])
@@ -57,7 +59,7 @@ describe('/api/admins', () => {
       expect(res.status).toBe(200)
       expect(res.body.length).toBe(2);
       res.body.forEach((order) => {
-        expect(order).toHaveProperty('order')
+        expect(order).toHaveProperty('meal')
         expect(order).toHaveProperty('customer')
       })
     })
@@ -77,7 +79,11 @@ describe('/api/admins', () => {
       meal = new Meal({ name: 'chidi', day: 'sunday', price: 7500 })
       customer = new Customer({ name: 'chidi', phone: "08036492474" })
 
-      order = new Order({ meal, customer })
+      order = order = new Order({
+        meal: _.pick(meal,['_id', 'name', 'day', 'price']),
+        customer: _.pick(customer,['name', 'phone'])
+      })
+
       orderId = order._id
       await order.save()
 
@@ -131,4 +137,71 @@ describe('/api/admins', () => {
    
   })
 
+  describe('POST /', () => {
+    let mealId;
+    let customer;
+
+    beforeEach( async () => {
+      mealId = mongoose.Types.ObjectId()
+
+      customer = { name: 'chidi', phone: "08036492474" }
+ 
+    })
+    
+    const exec = () => {
+      return request(server)
+        .post('/api/orders')
+        .set('x-auth-token', token)
+        .send({ mealId, customer: _.pick(customer, ['name', 'phone']) })
+    }
+
+    it(('should return 400 if mealId is invalid'), async () => {
+      mealId = "1";
+
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    })
+
+    it(('should return 400 if customer name is falsy'), async () => {
+      customer.name = "";
+      
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it(('should return 400 if customer phone is falsy'), async () => {
+      customer.phone = "";
+      
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it(('should return 404 if meal is not found'), async () => {
+      mealId = mongoose.Types.ObjectId()
+      
+      const res = await exec();
+
+      expect(res.status).toBe(404)
+    })
+
+    it(('should save order if inputs are valid'), async () => {
+      const res = await exec();
+
+      const orderInDB = await Order.find({ 
+        "meal._id": mealId, 
+        "customer.name": customer.name 
+      })
+
+      console.log(orderInDB)
+
+      expect(orderInDB).not.toBeNull()
+    })
+  
+     
+ 
+  })
+  
 })
