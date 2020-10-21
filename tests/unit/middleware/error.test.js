@@ -4,7 +4,7 @@ describe('error middleware', () => {
   it('should return 500', () => {
     const winston = {
       error: jest.fn( (message, err) => {
-        console.log('omo')
+        
       })
     }
     
