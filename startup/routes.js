@@ -1,5 +1,5 @@
 const express = require('express');
- 
+const winston = require('winston')
 const orders = require('../routes/orders')
 const meals = require('../routes/meals')
 const admins = require('../routes/admins')
@@ -16,6 +16,6 @@ module.exports = function(app) {
   app.use('/api/auth', auth) // use the auth router;
   
   //error middleware
-  app.use(error);
+  app.use(error(winston));
 
 }
