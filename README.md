@@ -6,12 +6,18 @@ If you're reading this, please star this repo. I wanna be famous🥺
 Anyway...  
 
 ## How to get started:
-1. npm install (do not npm audit fix if you plan to see test coverage on the web)  
-2. Set **madam_sauce_kitchen_jwtPrivateKey** environment variable to store your private key for Json Web Tokens - **Important!**
+1. Download or clone this repository
+2. Run ```npm install``` on the terminal (do not npm audit fix if you plan to see test coverage on the web)  
+3. Set **madam_sauce_kitchen_jwtPrivateKey** environment variable to store your private key for Json Web Tokens - **Important!**   
+**For example**  
+You can run this on the terminal:   
+```
+export madam_sauce_kitchen_jwtPrivateKey=mySecureKey
+```
 
 ## Tests:
-1. Set the NODE_ENV environment variable to **test**
-2. npm test  
+1. Set the **NODE_ENV** environment variable to **test**
+2. Run ``npm test`` on the terminal
 3. open the newly created **coverage/Icov-report/index.html** file to see test coverage on the app  
 
 ## How to use the API:  
