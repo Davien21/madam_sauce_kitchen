@@ -24,14 +24,12 @@ router.get('/:id', auth, validateObjectId, async (req, res) => {
 })
  
 router.post('/', validateBody(validateOrder), async (req, res) => {
-  const customer = new Customer(_.pick(req.body.customer,['name', 'phone']))
-  
   const meal = await Meal.findById(req.body.mealId);
-  if (!meal) return res.status(400).send('Meal'); 
-
+  if (!meal) return res.status(404).send('Invalid Meal'); 
+  
   let order = new Order({
     meal: _.pick(meal,['_id', 'name', 'day', 'price']),
-    customer: _.pick(customer,['name', 'phone'])
+    customer: _.pick(req.body.customer,['name', 'phone'])
   })
 
   order = await order.save()
@@ -40,14 +38,12 @@ router.post('/', validateBody(validateOrder), async (req, res) => {
 })
 
 router.put('/:id', [auth, validateObjectId, validateBody(validateOrder)], async (req, res) => {
-  const customer = new Customer(_.pick(req.body.customer,['name', 'phone']))
-  
   const meal = await Meal.findById(req.body.mealId);
   if (!meal) return res.status(400).send('Invalid Meal'); 
 
   const order = await Order.findByIdAndUpdate(req.params.id,
     { meal: _.pick(meal,['_id', 'name', 'day', 'price']),
-      customer: _.pick(customer,['name', 'phone'])
+      customer: _.pick(req.body.customer,['name', 'phone'])
     }, { new: true }
   )
 
