@@ -138,11 +138,14 @@ describe('/api/admins', () => {
   })
 
   describe('POST /', () => {
+    let meal;
     let mealId;
     let customer;
 
     beforeEach( async () => {
-      mealId = mongoose.Types.ObjectId()
+      meal = new Meal({ name: 'chidi', day: 'monday', price: '5000'})
+      await meal.save()
+      mealId = meal._id
 
       customer = { name: 'chidi', phone: "08036492474" }
  
@@ -152,7 +155,7 @@ describe('/api/admins', () => {
       return request(server)
         .post('/api/orders')
         .set('x-auth-token', token)
-        .send({ mealId, customer: _.pick(customer, ['name', 'phone']) })
+        .send({ mealId, customer })
     }
 
     it(('should return 400 if mealId is invalid'), async () => {
@@ -186,21 +189,131 @@ describe('/api/admins', () => {
 
       expect(res.status).toBe(404)
     })
+    
+    it(('should return 200 if inputs are valid'), async () => {
+      const res = await exec();
 
+      expect(res.status).toBe(200)
+    })
+    
     it(('should save order if inputs are valid'), async () => {
       const res = await exec();
 
-      const orderInDB = await Order.find({ 
-        "meal._id": mealId, 
-        "customer.name": customer.name 
-      })
-
-      console.log(orderInDB)
+      const orderInDB = await Order.find({ "meal._id": mealId })
 
       expect(orderInDB).not.toBeNull()
     })
+    
+    it(('should return order to body of response'), async () => {
+      const res = await exec();
+
+      expect(res.body).toHaveProperty('meal')
+      expect(res.body).toHaveProperty('customer')
+    })
+ 
+  })
   
+  describe('PUT /:id', () => {
+    let newCustomer;
+    let newMeal;
+    let newMealId;
+    let order;
+    let token;
+
+    beforeEach( async () => {
+      // Before each test we need to create an order and meals and 
+      // put it in the database.
+      let oldMeal = new Meal({ name: 'banga soup', day: 'sunday', price: '2000'})
+      let oldCustomer = new Customer({ name: 'chidi', phone: "08036492474" })
      
+      order = new Order({ meal: oldMeal, customer: oldCustomer })
+      await order.save()
+      
+      orderId = order._id
+
+      newMeal = new Meal({ name: 'pizza', day: 'monday', price: '5000'})
+      await newMeal.save()
+      // These are going to be used for the update:
+      newMealId = newMeal._id
+      newCustomer = { name: 'chidi', phone: "08036492474" }
+      token = new Admin().generateAuthToken()
+    })
+    
+    const exec = () => {
+      return request(server)
+        .put('/api/orders/' + orderId)
+        .set('x-auth-token', token)
+        .send({ mealId: newMealId, customer: newCustomer })
+    }
+
+    it('should return 401 if not logged in', async () => {
+      token = ''
+
+      const res = await exec();
+
+      expect(res.status).toBe(401)
+    })
+
+    it(('should return 400 if orderId is invalid'), async () => {
+      orderId = "1";
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+
+    it(('should return 404 if order is not found'), async () => {
+      orderId = mongoose.Types.ObjectId;
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+
+    it(('should return 400 if customer name is falsy'), async () => {
+      newCustomer.name = "";
+      
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it(('should return 400 if customer phone is falsy'), async () => {
+      newCustomer.phone = "";
+      
+      const res = await exec();
+
+      expect(res.status).toBe(400)
+    })
+
+    it(('should return 404 if meal is not found'), async () => {
+      newMealId = mongoose.Types.ObjectId()
+      
+      const res = await exec();
+
+      expect(res.status).toBe(404)
+    })
+    
+    it(('should return 200 if inputs are valid'), async () => {
+      const res = await exec();
+
+      expect(res.status).toBe(200)
+    })
+    
+    it(('should update order if inputs are valid'), async () => {
+      const res = await exec();
+
+      const orderInDB = await Order.find({ "meal._id": newMealId, "customer.name": 'chidi' })
+
+      expect(orderInDB).not.toBeNull()
+    })
+    
+    it(('should return order to body of response'), async () => {
+      const res = await exec();
+
+      expect(res.body).toHaveProperty('meal')
+      expect(res.body).toHaveProperty('customer')
+    })
  
   })
   
