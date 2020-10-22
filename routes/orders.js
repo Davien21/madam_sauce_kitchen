@@ -39,14 +39,14 @@ router.post('/', validateBody(validateOrder), async (req, res) => {
 
 router.put('/:id', [auth, validateObjectId, validateBody(validateOrder)], async (req, res) => {
   const meal = await Meal.findById(req.body.mealId);
-  if (!meal) return res.status(400).send('Invalid Meal'); 
-
+  if (!meal) return res.status(404).send('meal not found'); 
+  
   const order = await Order.findByIdAndUpdate(req.params.id,
     { meal: _.pick(meal,['_id', 'name', 'day', 'price']),
-      customer: _.pick(req.body.customer,['name', 'phone'])
-    }, { new: true }
+    customer: _.pick(req.body.customer,['name', 'phone'])
+  }, { new: true }
   )
-
+  
   if(!order) return res.status(404).send('Invalid Order')
 
 
