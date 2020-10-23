@@ -218,6 +218,7 @@ describe('/api/admins', () => {
     let newMeal;
     let newMealId;
     let order;
+    let orderId;
     let token;
 
     beforeEach( async () => {
@@ -254,7 +255,7 @@ describe('/api/admins', () => {
       expect(res.status).toBe(401)
     })
 
-    it(('should return 400 if orderId is invalid'), async () => {
+    it(('should return 404 if orderId is invalid'), async () => {
       orderId = "1";
 
       const res = await exec();
@@ -262,13 +263,7 @@ describe('/api/admins', () => {
       expect(res.status).toBe(404);
     })
 
-    it(('should return 404 if order is not found'), async () => {
-      orderId = mongoose.Types.ObjectId;
-
-      const res = await exec();
-
-      expect(res.status).toBe(404);
-    })
+    
 
     it(('should return 400 if customer name is falsy'), async () => {
       newCustomer.name = "";
@@ -300,6 +295,15 @@ describe('/api/admins', () => {
       expect(res.status).toBe(200)
     })
     
+    
+    it(('should return 404 if order is not found'), async () => {
+      orderId = mongoose.Types.ObjectId;
+
+      const res = await exec();
+      
+      expect(res.status).toBe(404);
+    })
+
     it(('should update order if inputs are valid'), async () => {
       const res = await exec();
 
@@ -307,8 +311,80 @@ describe('/api/admins', () => {
 
       expect(orderInDB).not.toBeNull()
     })
-    
+
     it(('should return order to body of response'), async () => {
+      const res = await exec();
+
+      expect(res.body).toHaveProperty('meal')
+      expect(res.body).toHaveProperty('customer')
+    })
+ 
+  })
+  
+  describe('DELETE /:id', () => {
+    let order;
+    let orderId;
+    let token;
+
+    beforeEach( async () => {
+      // Before each test we need to create an order and meals and 
+      // put it in the database.
+      let meal = new Meal({ name: 'banga soup', day: 'sunday', price: '2000'})
+      let customer = new Customer({ name: 'chidi', phone: "08036492474" })
+     
+      order = new Order({ meal, customer })
+      await order.save()
+      
+      orderId = order._id
+      token = new Admin().generateAuthToken()
+    })
+    
+    const exec = () => {
+      return request(server)
+        .delete('/api/orders/' + orderId)
+        .set('x-auth-token', token)
+        .send()
+    }
+
+    it('should return 401 if not logged in', async () => {
+      token = ''
+
+      const res = await exec();
+
+      expect(res.status).toBe(401)
+    })
+
+    it(('should return 404 if orderId is invalid'), async () => {
+      orderId = "1";
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    })
+ 
+    it(('should return 404 if order is not found'), async () => {
+      orderId = mongoose.Types.ObjectId;
+
+      const res = await exec();
+      
+      expect(res.status).toBe(404);
+    })
+    
+    it(('should return 200 if inputs are valid'), async () => {
+      const res = await exec();
+
+      expect(res.status).toBe(200)
+    })
+    
+    it(('should delete order if order exists is valid'), async () => {
+      const res = await exec();
+
+      const orderInDB = await Order.findById(orderId)
+
+      expect(orderInDB).toBeNull()
+    })
+
+    it(('should return deleted order to body of response'), async () => {
       const res = await exec();
 
       expect(res.body).toHaveProperty('meal')
