@@ -263,7 +263,14 @@ describe('/api/admins', () => {
       expect(res.status).toBe(404);
     })
 
-    
+      
+    it(('should return 404 if order is not found'), async () => {
+      orderId = mongoose.Types.ObjectId();
+
+      const res = await exec();
+      
+      expect(res.status).toBe(404);
+    })
 
     it(('should return 400 if customer name is falsy'), async () => {
       newCustomer.name = "";
@@ -293,15 +300,6 @@ describe('/api/admins', () => {
       const res = await exec();
 
       expect(res.status).toBe(200)
-    })
-    
-    
-    it(('should return 404 if order is not found'), async () => {
-      orderId = mongoose.Types.ObjectId;
-
-      const res = await exec();
-      
-      expect(res.status).toBe(404);
     })
 
     it(('should update order if inputs are valid'), async () => {
@@ -363,7 +361,7 @@ describe('/api/admins', () => {
     })
  
     it(('should return 404 if order is not found'), async () => {
-      orderId = mongoose.Types.ObjectId;
+      orderId = mongoose.Types.ObjectId();
 
       const res = await exec();
       
