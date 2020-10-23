@@ -49,7 +49,6 @@ router.put('/:id', [auth, validateObjectId, validateBody(validateOrder)], async 
   
   if(!order) return res.status(404).send('Invalid Order')
 
-
   res.send(order);
 })
 
