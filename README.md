@@ -39,6 +39,7 @@ C. **GET /:id** route
 This returns a meal with the given id.  
 
 D. **POST /** route  
+When logged in (use auth token)   
 Pass a valid meal object with name, day and price properties in the body of the request to add a new meal.  
 **For Example**:  
 ```
@@ -50,10 +51,12 @@ Pass a valid meal object with name, day and price properties in the body of the 
 ```
 
 E. **PUT /:id** route  
+When logged in (use auth token)   
 Step 1: Pass a **meal id** as a parameter   
 Step 2: Pass a **valid meal object** with name, day and price properties in the body of the request to update an existing meal.  
 
 F. **DELETE /:id** route  
+When logged in (use auth token)   
 Pass a **meal id** as a parameter to delete an existing meal.  
 
 
@@ -74,12 +77,15 @@ With no frontend interface, this auth token can be passed into any request's hea
 
 ### 3. /api/admins  
 A. **GET /** route  
+When logged in (use auth token)    
 This returns the names of all admins.   
 
 B. **GET /:id** route  
+When logged in (use auth token)     
 This returns the admin with the given id.   
 
 C. **POST /** route  
+When logged in (use auth token)    
 Pass a **valid admin object** with name, email and password in the body of the request. 
 **For Example**:  
 ```
@@ -91,11 +97,13 @@ Pass a **valid admin object** with name, email and password in the body of the r
 ```
 
 D. **PUT /:id** route  
+When logged in (use auth token)    
 Step 1: Pass a **admin id** as a parameter   
 Step 2: Pass a **valid admin object** with name, email and password properties in the body of the request to update an existing admin.  
 
 
 F. **DELETE /:id** route  
+When logged in (use auth token)    
 Pass a **admin id** as a parameter to delete an existing admin.  
 
 
@@ -120,10 +128,12 @@ Pass a **valid order object** with a valid / existing mealId and a customer obje
 ```
 
 D. **PUT /:id** route  
+When logged in (use auth token)    
 Step 1: Pass an **order id** as a parameter   
 Step 2: Pass a **valid order object** with a valid / existing mealId and a customer object in the body of the request. 
 
 
 F. **DELETE /:id** route  
+When logged in (use auth token)    
 Pass an **order id** as a parameter to delete an existing order.  
 
