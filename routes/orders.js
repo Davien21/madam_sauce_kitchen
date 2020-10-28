@@ -1,5 +1,4 @@
 const { Order, validateOrder } = require('../models/order')
-const { Customer } = require('../models/customer')
 const { Meal } = require('../models/meal')
 const _ = require('lodash')
 const auth = require('../middleware/auth')
@@ -12,7 +11,6 @@ const router = express.Router();
 router.get('/', auth, async (req, res) => {
   const orders = await Order.find().sort('name')
   res.send(orders);
-
 })
 
 router.get('/:id', auth, validateObjectId, async (req, res) => {
@@ -43,7 +41,7 @@ router.put('/:id', [auth, validateObjectId, validateBody(validateOrder)], async 
   
   const order = await Order.findByIdAndUpdate(req.params.id,
     { meal: _.pick(meal,['_id', 'name', 'day', 'price']),
-    customer: _.pick(req.body.customer,['name', 'phone'])
+    customer: _.pick(req.body.customer, ['name', 'phone'])
   }, { new: true }
   )
   
