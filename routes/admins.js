@@ -16,9 +16,10 @@ router.get('/', async (req,res) => {
 })
 
 router.get('/:id', validateObjectId, async (req,res) => {
-	const admin = await Admin.findOne({ _id : req.params.id }).select('name')
-	if (!admin) return res.status(404).send('Invalid Admin'); 
-	res.send(admin);
+	const admin = await Admin.findById(req.params.id).select('name')
+  if (!admin) return res.status(404).send('Invalid Admin'); 
+  
+  res.send(admin);
 })
 
 router.post('/', [validateBody(validateAdmin)], async (req,res) => {
@@ -32,7 +33,7 @@ router.post('/', [validateBody(validateAdmin)], async (req,res) => {
   await admin.save();
   
   const token =  admin.generateAuthToken();
-	res.header('x-auth-token',token).send(_.pick(admin,['_id','name','email']));
+	res.header('x-auth-token', token).send(_.pick(admin,['_id','name','email']));
 })
 
 router.put('/:id', [auth, validateObjectId, validateBody(validateAdmin)], async (req,res) => {
